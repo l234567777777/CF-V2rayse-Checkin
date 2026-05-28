@@ -1,79 +1,96 @@
-# 鑷姩绛惧埌绯荤粺
+# 自动签到系统
 
-> 鍩轰簬 Cloudflare Workers 鐨勬満鍦鸿嚜鍔ㄧ鍒拌剼鏈紝鏀寔 V2rayse 鍜?SSPanel 涓ょ鏈哄満绫诲瀷锛屽唴缃?Web 绠＄悊闈㈡澘銆?
-## 鍔熻兘鐗规€?
-- **鍙屽钩鍙版敮鎸?*锛歏2rayse / SSPanel 鏈哄満鑷姩绛惧埌
-- **Web 绠＄悊闈㈡澘**锛氬彲瑙嗗寲閰嶇疆銆佹墜鍔ㄨЕ鍙戠鍒般€佹煡鐪嬫棩蹇?- **Telegram 鎺ㄩ€?*锛氱鍒扮粨鏋滃疄鏃舵帹閫佸埌 TG锛堟敮鎸佽嚜瀹氫箟 Bot 鎴栧唴缃?Bot锛?- **瀹氭椂浠诲姟**锛氭敮鎸?Cloudflare Cron Trigger 鑷姩鎵ц
-- **Cookie 鑷姩绠＄悊**锛氱櫥褰曟€佽嚜鍔ㄧ淮鎶わ紝鏃犻渶鎵嬪姩骞查
-- **閲嶈瘯鏈哄埗**锛氬け璐ヨ嚜鍔ㄩ噸璇?3 娆?
-## 蹇€熷紑濮?
-### 1. 閮ㄧ讲鍒?Cloudflare Workers
+> 基于 Cloudflare Workers 的机场自动签到脚本，支持 V2rayse 和 SSPanel 两种机场类型，内置 Web 管理面板。
 
-1. 鐧诲綍 [Cloudflare Workers](https://workers.cloudflare.com/)
-2. 鍒涘缓鏂?Worker
-3. 灏?`index.js` 鍐呭澶嶅埗鍒?Worker 缂栬緫鍣ㄤ腑
-4. 淇濆瓨骞堕儴缃?
-### 2. 閰嶇疆鐜鍙橀噺
+## 功能特性
 
-鍦?Worker 璁剧疆 鈫?**Variables and Secrets** 涓坊鍔狅細
+- **双平台支持**：V2rayse / SSPanel 机场自动签到
+- **Web 管理面板**：可视化配置、手动触发签到、查看日志
+- **Telegram 推送**：签到结果实时推送到 TG（支持自定义 Bot 或内置 Bot）
+- **定时任务**：支持 Cloudflare Cron Trigger 自动执行
+- **Cookie 自动管理**：登录态自动维护，无需手动干预
+- **重试机制**：失败自动重试 3 次
 
-| 鍙橀噺鍚?| 蹇呭～ | 璇存槑 |
+## 快速开始
+
+### 1. 部署到 Cloudflare Workers
+
+1. 登录 [Cloudflare Workers](https://workers.cloudflare.com/)
+2. 创建新 Worker
+3. 将 `index.js` 内容复制到 Worker 编辑器中
+4. 保存并部署
+
+### 2. 配置环境变量
+
+在 Worker 设置 → **Variables and Secrets** 中添加：
+
+| 变量名 | 必填 | 说明 |
 |--------|------|------|
-| `JC` / `DOMAIN` | 鉁?| 鏈哄満鍩熷悕锛堝 `https://xxx.com`锛?|
-| `ZH` / `USER` | 鉁?| 鐧诲綍閭 |
-| `MM` / `PASS` | 鉁?| 鐧诲綍瀵嗙爜 |
-| `TYPE` | 鉁?| 鏈哄満绫诲瀷锛歚v2rayse` 鎴?`sspanel` |
-| `TGTOKEN` / `TG_TOKEN` | 鉂?| Telegram Bot Token锛堣嚜瀹氫箟 Bot锛?|
-| `TGID` / `TG_ID` | 鉂?| Telegram Chat ID |
+| `JC` / `DOMAIN` | ✅ | 机场域名（如 `https://xxx.com`） |
+| `ZH` / `USER` | ✅ | 登录邮箱 |
+| `MM` / `PASS` | ✅ | 登录密码 |
+| `TYPE` | ✅ | 机场类型：`v2rayse` 或 `sspanel` |
+| `TGTOKEN` / `TG_TOKEN` | ❌ | Telegram Bot Token（自定义 Bot） |
+| `TGID` / `TG_ID` | ❌ | Telegram Chat ID |
 
-> **娉ㄦ剰**锛歚TGTOKEN` 鍜?`TGID` 閮戒笉濉椂锛屼娇鐢ㄥ唴缃?Bot 鎺ㄩ€侊紙闇€濉啓 `TGID`锛夈€?
-### 3. 璁剧疆瀹氭椂浠诲姟
+> **注意**：`TGTOKEN` 和 `TGID` 都不填时，使用内置 Bot 推送（需填写 `TGID`）。
 
-鍦?Worker 璁剧疆 鈫?**Triggers** 鈫?**Cron Triggers** 涓坊鍔狅細
+### 3. 设置定时任务
+
+在 Worker 设置 → **Triggers** → **Cron Triggers** 中添加：
 
 ```
 0 6 * * *
 ```
 
-琛ㄧず姣忓ぉ鏃╀笂 6:00 鑷姩鎵ц绛惧埌銆?
-### 4. 璁块棶绠＄悊闈㈡澘
+表示每天早上 6:00 自动执行签到。
 
-閮ㄧ讲鍚庤闂?Worker 鐨?URL锛堝 `https://your-worker.your-subdomain.workers.dev/`锛夛紝杈撳叆瀵嗙爜鍗冲彲鐧诲綍绠＄悊闈㈡澘銆?
-闈㈡澘鍔熻兘锛?- 鏌ョ湅褰撳墠閰嶇疆淇℃伅锛堣劚鏁忔樉绀猴級
-- 鎵嬪姩瑙﹀彂绛惧埌
-- 娴嬭瘯 Telegram 鎺ㄩ€?- 瀹炴椂鏌ョ湅绛惧埌鏃ュ織
+### 4. 访问管理面板
 
-## 椤圭洰缁撴瀯
+部署后访问 Worker 的 URL（如 `https://your-worker.your-subdomain.workers.dev/`），输入密码即可登录管理面板。
+
+面板功能：
+- 查看当前配置信息（脱敏显示）
+- 手动触发签到
+- 测试 Telegram 推送
+- 实时查看签到日志
+
+## 项目结构
 
 ```
-鈹溾攢鈹€ index.js          # 涓绘枃浠讹紙Cloudflare Worker 鍏ュ彛锛?鈹溾攢鈹€ README.md         # 椤圭洰璇存槑
-鈹溾攢鈹€ wrangler.toml     # Cloudflare Workers 閰嶇疆鏂囦欢锛堝彲閫夛級
-鈹斺攢鈹€ .gitignore        # Git 蹇界暐瑙勫垯
+├── index.js          # 主文件（Cloudflare Worker 入口）
+├── README.md         # 项目说明
+├── wrangler.toml     # Cloudflare Workers 配置文件（可选）
+└── .gitignore        # Git 忽略规则
 ```
 
-## 鎶€鏈爤
+## 技术栈
 
 - **Runtime**: Cloudflare Workers (V8 Isolate)
 - **API**: Fetch API
-- **Auth**: SHA-256 鍝堝笇楠岃瘉
-- **UI**: 鍘熺敓 HTML/CSS/JS锛堟棤妗嗘灦渚濊禆锛?
-## 瀹夊叏璇存槑
+- **Auth**: SHA-256 哈希验证
+- **UI**: 原生 HTML/CSS/JS（无框架依赖）
 
-- 绠＄悊闈㈡澘浣跨敤 SHA-256 鍝堝笇楠岃瘉锛屽瘑鐮佷笉瀛樺偍鍦ㄥ鎴风
-- 閰嶇疆淇℃伅鍦ㄩ潰鏉夸腑鑴辨晱鏄剧ず
-- Telegram 鎺ㄩ€佷腑鐨勫瘑鐮佷娇鐢?`<tg-spoiler>` 鏍囩闅愯棌
+## 安全说明
 
-## 甯歌闂
+- 管理面板使用 SHA-256 哈希验证，密码不存储在客户端
+- 配置信息在面板中脱敏显示
+- Telegram 推送中的密码使用 `<tg-spoiler>` 标签隐藏
 
-**Q: 绛惧埌杩斿洖"绛惧埌澶辫触"浣嗗疄闄呮垚鍔熶簡锛?*
+## 常见问题
 
-A: 鏌愪簺 V2rayse 绔欑偣杩斿洖鐨?JSON 缁撴瀯涓嶅悓锛堝 `summary.points` 鑰岄潪 `awardedPoints`锛夈€備唬鐮佸凡鍐呯疆澶氱鎴愬姛鍒ゅ畾閫昏緫锛屽閬囬棶棰樿鏌ョ湅鏃ュ織涓殑鍘熷鍝嶅簲銆?
-**Q: 濡備綍鏌ョ湅璇︾粏鏃ュ織锛?*
+**Q: 签到返回"签到失败"但实际成功了？**
 
-A: 鍦ㄧ鐞嗛潰鏉跨偣鍑?鎵嬪姩鎵ц绛惧埌"锛屾棩蹇椾細瀹炴椂鏄剧ず鍦ㄥ彸渚ф帶鍒跺彴銆備篃鍙湪 Cloudflare Workers 鐨?**Logs** 涓煡鐪嬨€?
-**Q: 鏀寔澶氫釜鏈哄満鍚屾椂绛惧埌鍚楋紵**
+A: 某些 V2rayse 站点返回的 JSON 结构不同（如 `summary.points` 而非 `awardedPoints`）。代码已内置多种成功判定逻辑，如遇问题请查看日志中的原始响应。
 
-A: 褰撳墠鐗堟湰姣忎釜 Worker 瀹炰緥鍙敮鎸佷竴涓満鍦恒€傚闇€澶氭満鍦猴紝鍙儴缃插涓?Worker 瀹炰緥銆?
+**Q: 如何查看详细日志？**
+
+A: 在管理面板点击"手动执行签到"，日志会实时显示在右侧控制台。也可在 Cloudflare Workers 的 **Logs** 中查看。
+
+**Q: 支持多个机场同时签到吗？**
+
+A: 当前版本每个 Worker 实例只支持一个机场。如需多机场，可部署多个 Worker 实例。
+
 ## License
 
 MIT
