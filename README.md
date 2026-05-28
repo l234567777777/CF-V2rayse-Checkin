@@ -1,10 +1,10 @@
 # 自动签到系统
 
-> 基于 Cloudflare Workers 的机场自动签到脚本，支持 V2rayse 和 SSPanel 两种机场类型，内置 Web 管理面板。
+> 基于 Cloudflare Workers 的通用网站自动签到脚本，支持 V2rayse、SSPanel 等多种网站类型，内置 Web 管理面板。
 
 ## 功能特性
 
-- **双平台支持**：V2rayse / SSPanel 机场自动签到
+- **多平台支持**：V2rayse、SSPanel 等网站自动签到
 - **Web 管理面板**：可视化配置、手动触发签到、查看日志
 - **Telegram 推送**：签到结果实时推送到 TG（支持自定义 Bot 或内置 Bot）
 - **定时任务**：支持 Cloudflare Cron Trigger 自动执行
@@ -29,7 +29,7 @@
 | `JC` / `DOMAIN` | ✅ | 机场域名（如 `https://xxx.com`） |
 | `ZH` / `USER` | ✅ | 登录邮箱 |
 | `MM` / `PASS` | ✅ | 登录密码 |
-| `TYPE` | ✅ | 机场类型：`v2rayse` 或 `sspanel` |
+| `TYPE` | ✅ | 网站类型：`v2rayse` 或 `sspanel` |
 | `TGTOKEN` / `TG_TOKEN` | ❌ | Telegram Bot Token（自定义 Bot） |
 | `TGID` / `TG_ID` | ❌ | Telegram Chat ID |
 
@@ -81,7 +81,7 @@
 
 **Q: 签到返回"签到失败"但实际成功了？**
 
-A: 某些 V2rayse 站点返回的 JSON 结构不同（如 `summary.points` 而非 `awardedPoints`）。代码已内置多种成功判定逻辑，如遇问题请查看日志中的原始响应。
+A: 某些网站返回的 JSON 结构不同（如 `summary.points` 而非 `awardedPoints`）。代码已内置多种成功判定逻辑，如遇问题请查看日志中的原始响应。
 
 **Q: 如何查看详细日志？**
 
