@@ -2,16 +2,18 @@ name = "dashboard"
 main = "index.js"
 compatibility_date = "2024-01-01"
 
-# 鐜鍙橀噺锛堝紑鍙戠幆澧冿級
+# 环境变量（开发环境）
 [vars]
 # JC = "https://your-domain.com"
 # ZH = "your-email@example.com"
 # MM = "your-password"
 # TYPE = "v2rayse"
 
-# 瀵嗛挜锛堢敓浜х幆澧冮€氳繃 wrangler secret 璁剧疆锛?# [[secrets]]
+# 密钥（生产环境通过 wrangler secret 设置）
+# [[secrets]]
 # TGTOKEN = "your-bot-token"
 # TGID = "your-chat-id"
 
-# 瀹氭椂瑙﹀彂鍣?[[triggers]]
+# 定时触发器
+[[triggers]]
 crons = ["0 6 * * *"]
